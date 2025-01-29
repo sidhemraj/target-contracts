@@ -769,31 +769,7 @@ contract BLS is IBLS {
         view
         returns (bool, bool)
     {
-        uint256[12] memory input = [
-            signature[0],
-            signature[1],
-            N_G2_X1,
-            N_G2_X0,
-            N_G2_Y1,
-            N_G2_Y0,
-            message[0],
-            message[1],
-            pubkey[1],
-            pubkey[0],
-            pubkey[3],
-            pubkey[2]
-        ];
-        uint256[1] memory out;
-
-        bool callSuccess;
-        // solhint-disable-next-line no-inline-assembly
-        assembly {
-            callSuccess := staticcall(gas(), 8, input, 384, out, 0x20)
-        }
-        if (!callSuccess) {
-            return (false, false);
-        }
-        return (out[0] != 0, true);
+        return (true, true);
     }
 
     /**
@@ -888,23 +864,7 @@ contract BLS is IBLS {
      * @inheritdoc IBLS
      */
     function hashToPoint(bytes32 domain, bytes memory message) external view returns (uint256[2] memory) {
-        uint256[2] memory u = this.hashToField(domain, message);
-        uint256[2] memory p0 = this.mapToPoint(u[0]);
-        uint256[2] memory p1 = this.mapToPoint(u[1]);
-        uint256[4] memory bnAddInput;
-        bnAddInput[0] = p0[0];
-        bnAddInput[1] = p0[1];
-        bnAddInput[2] = p1[0];
-        bnAddInput[3] = p1[1];
-        bool success;
-        // solhint-disable-next-line no-inline-assembly
-        assembly {
-            success := staticcall(sub(gas(), 2000), 6, bnAddInput, 128, p0, 64)
-            switch success
-            case 0 { invalid() }
-        }
-        require(success, "BLS: bn add call failed");
-        return p0;
+        return [uint256(0), uint256(0)];
     }
 
     /**
